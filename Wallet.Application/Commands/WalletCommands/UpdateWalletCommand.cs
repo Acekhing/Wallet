@@ -33,6 +33,7 @@ namespace Wallet.Application.Commands.WalletCommands
 
         public async Task<BaseReponse> Handle(UpdateWalletCommand request, CancellationToken cancellationToken)
         {
+            // Delegate task to the general update execution
             return await _unitOfWork.WalletRepository.HandleUpdateAsync(_mapper, request, request.Id);
         }
     }

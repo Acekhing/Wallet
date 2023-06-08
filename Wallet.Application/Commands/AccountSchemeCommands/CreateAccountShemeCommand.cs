@@ -36,6 +36,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
             if (scheme != null) // Checking if wallet type already exist. 
                 return response.Failed("Creation", DuplicateMsg);
 
+            // Delegate task to the general create execution
             return await _unitOfWork.AccountSchemeRepository.HandleCreateAsync(_mapper, request);
         }
     }

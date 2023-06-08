@@ -38,6 +38,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
             if (scheme != null && scheme.Id != request.Id) // Checking if wallet type already exist. 
                 return response.Failed("Update", DuplicateMsg);
 
+            // Delegate task to the general update execution
             return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request, request.Id);
         }
     }

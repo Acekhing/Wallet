@@ -38,7 +38,7 @@ namespace Wallet.Application.Commands.WalletTypeCommands
             if (type != null && type.Id != request.Id) // Checking if wallet type already exist. 
                 return response.Failed("Update", DuplicateMsg);
 
-
+            // Delegate task to the general update execution
             return await _unitOfWork.WalletTypeRepository.HandleUpdateAsync(_mapper, request, request.Id);
         }
     }

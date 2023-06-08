@@ -37,6 +37,7 @@ namespace Wallet.Application.Commands.WalletCommands
             if (results != null && results.Count == 5)
                 return new BaseReponse { Message = "Action failed.", Success = false, Errors = new List<string> { MaxWalletMsg } };
 
+            // Delegate task to the general create execution
             return await _unitOfWork.WalletRepository.HandleCreateAsync(_mapper, request);
         }
     }
