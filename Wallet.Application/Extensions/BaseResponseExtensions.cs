@@ -23,10 +23,11 @@ namespace Wallet.Application.Extensions
             return response;
         }
 
-        public static BaseReponse Failed(this BaseReponse response, string message)
+        public static BaseReponse Failed(this BaseReponse response, string action, string message)
         {
-            response.Message = message;
+            response.Message = $"{action} failed";
             response.Success = false;
+            response.Errors = new List<string> { message };
 
             return response;
         }
