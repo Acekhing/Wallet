@@ -35,6 +35,7 @@ namespace Wallet.Application.Commands.WalletTypeCommands
             if (type != null) // Checking if wallet type already exist. 
                 return response.Failed("Creation", DuplicateMsg);
 
+            // Delegate task to the general create execution
             return await _unitOfWork.WalletTypeRepository.HandleCreateAsync(_mapper, request);
         }
     }
