@@ -6,10 +6,8 @@
 
   <ItemGroup>
     <Folder Include="Contracts\Auth\" />
-    <Folder Include="DTOs\WalletModels\" />
     <Folder Include="Configs\" />
     <Folder Include="DTOs\AuthModels\" />
-    <Folder Include="Queries\" />
   </ItemGroup>
 
 

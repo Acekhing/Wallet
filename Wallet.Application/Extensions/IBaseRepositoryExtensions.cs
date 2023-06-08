@@ -15,7 +15,7 @@ namespace Wallet.Application.Extensions
 
             var entity = mapper.Map<TEntity>(payload); // Map payload to domain entity
 
-            var id = await repository.UpSertAsync(entity); // Create record
+            var id = await repository.CreateAsync(entity); // Create record
 
             if (!string.IsNullOrEmpty(id))
                 return response.Created(id, $"{nameof(TEntity)} created successfully");
@@ -36,7 +36,7 @@ namespace Wallet.Application.Extensions
 
             var entity = mapper.Map(payload, existingRecord); // Map payload to domain entity
 
-            id = await repository.UpSertAsync(entity); // Create record
+            id = await repository.UpdateAsync(entity); // update record
 
             if (!string.IsNullOrEmpty(id))
                 return response.Created(id, $"{nameof(TEntity)} created successfully");
