@@ -1,42 +1,36 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Wallet.Application.Commands.WalletCommands;
-using Wallet.Application.Queries.WalletQueries;
+using Wallet.Application.Commands.WalletTypeCommands;
+using Wallet.Application.Queries.WalletTypeQueries;
 
 namespace Wallet.API.Controllers
 {
-    [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles ="Admin")]
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class WalletTypesController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public UsersController(IMediator mediator)
+        public WalletTypesController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetWallets(string userId)
+        public async Task<IActionResult> GetAll()
         {
-            var results = await _mediator.Send(new GetAllUserWalletQuery { UserId = userId});
+            var results = await _mediator.Send(new GetAllWalletTypeQuery()); ;
 
             return Ok(results);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetWalletById(string userId, string walletId)
-        {
-            var results = await _mediator.Send(new GetWalletByIdQuery { UserId = userId, WalletId = walletId });
-
-            return Ok(results);
-        }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWallet([FromBody] CreateWalletCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateWalletTypeCommand command)
         {
             var results = await _mediator.Send(command);
 
@@ -47,7 +41,7 @@ namespace Wallet.API.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> UpdateWallet([FromBody] UpdateWalletCommand command)
+        public async Task<IActionResult> Update([FromBody] UpdateWalletTypeCommand command)
         {
             var results = await _mediator.Send(command);
 
@@ -58,7 +52,7 @@ namespace Wallet.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteWallet([FromBody] DeleteWalletCommand command)
+        public async Task<IActionResult> Delete([FromBody] DeleteWalletTypeCommand command)
         {
             var results = await _mediator.Send(command);
 

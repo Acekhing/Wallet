@@ -26,9 +26,4 @@
     <ProjectReference Include="..\Wallet.Application\Wallet.Application.csproj" />
   </ItemGroup>
 
-
-	<ItemGroup>
-	  <Folder Include="Configs\" />
-	</ItemGroup>
-
 </Project>

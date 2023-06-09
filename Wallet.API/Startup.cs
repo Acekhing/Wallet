@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wallet.API.Extensions;
+using Wallet.API.Middlewares;
 using Wallet.Application.Extensions;
 using Wallet.Infrastructure.Extensions;
 
@@ -24,6 +25,8 @@ namespace Wallet.API
             services.AddControllers();
 
             services.AddSwagger();
+
+            services.AddException();
 
             services.AddApplicationServices();
 
@@ -52,6 +55,8 @@ namespace Wallet.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

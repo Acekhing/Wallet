@@ -12,13 +12,19 @@ namespace Wallet.Infrastructure.Extensions
     {
         public static void SeedData(this ModelBuilder modelBuilder)
         {
-            //Seeding Admin role
+            //Seeding roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole()
                 {
                     Id = "2c5e174e-3b0e-446f-86af-483d56fd7210",
                     Name = "Admin",
                     NormalizedName = "Admin".ToUpper()
+                },
+                new IdentityRole()
+                {
+                    Id = "2c5e174e-3b0e-446f-86af-483d56fd7ddd",
+                    Name = "User",
+                    NormalizedName = "User".ToUpper()
                 }
                 );
            

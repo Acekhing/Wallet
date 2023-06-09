@@ -6,5 +6,6 @@
         public string WalletTypeId { get; set; }
         public string AccountSchemeId { get; set; }
         public string AccountNumber { get; set; }
+        public string Owner { get; set; }
     }
 }

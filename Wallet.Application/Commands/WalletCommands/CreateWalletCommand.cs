@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -16,6 +17,7 @@ namespace Wallet.Application.Commands.WalletCommands
         public string WalletTypeId { get; set; }
         public string AccountSchemeId { get; set; }
         public string AccountNumber { get; set; }
+        public string Owner { get; set; }
     }
 
     public class CreateWalletCommandHandler : IRequestHandler<CreateWalletCommand, BaseReponse>
@@ -35,18 +37,44 @@ namespace Wallet.Application.Commands.WalletCommands
             var response = new BaseReponse();
 
             if (await IsValidAccountScheme(request.AccountSchemeId) == false)
-                return response.Failed("Creation","Account scheme does not exist");
+            {
+                return response.Failed("Creation", "Account scheme does not exist");
+            }
 
+           
             if (await IsValidWalletType(request.WalletTypeId) == false)
+            {
                 return response.Failed("Creation", "Wallet type does not exist");
+            }
 
+            
+            if(await IsWalletExist(request.Name) == true)
+            {
+                return response.Failed("Creation", "Wallet exist with the same name");
+            }
+
+            
             var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == request.UserId);
 
             if (results != null && results.Count == 5)
                 return response.Failed("Creation", MaxWalletMsg);
 
+            SecureAccountnumber(request, out CreateWalletCommand securedAcnt);
+
             // Delegate task to the general create execution
-            return await _unitOfWork.WalletRepository.HandleCreateAsync(_mapper, request);
+            return await _unitOfWork.WalletRepository.HandleCreateAsync(_mapper, securedAcnt);
+        }
+
+        private void SecureAccountnumber(CreateWalletCommand request, out CreateWalletCommand securedAcnt)
+        {
+            securedAcnt = new CreateWalletCommand
+            {
+                UserId = request.UserId,
+                AccountSchemeId = request.AccountSchemeId,
+                Name = request.Name,
+                WalletTypeId = request.WalletTypeId,
+                AccountNumber = request.AccountNumber.Substring(0, 6),
+            };
         }
 
         private async Task<bool> IsValidAccountScheme(string schemeId)
@@ -62,6 +90,14 @@ namespace Wallet.Application.Commands.WalletCommands
             var schemes = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == typeIs);
 
             return schemes.Count > 0;
+        }
+
+        private async Task<bool> IsWalletExist(string name)
+        {
+            var matchingWallets = await _unitOfWork.WalletRepository
+                    .GetAllAsync(e => e.Name.ToLower().Trim() == name.ToLower().Trim());
+
+            return matchingWallets.Count > 0;
         }
     }
 }

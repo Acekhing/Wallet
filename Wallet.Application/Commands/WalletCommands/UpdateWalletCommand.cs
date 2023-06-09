@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -41,6 +42,9 @@ namespace Wallet.Application.Commands.WalletCommands
             if (await IsValidWalletType(request.WalletTypeId) == false)
                 return response.Failed("Update", "Wallet type does not exist");
 
+            if (await IsWalletExist(request.Name, request.Id) == true)
+                return response.Failed("Creation", "Wallet exist with the same name");
+
             // Delegate task to the general update execution
             return await _unitOfWork.WalletRepository.HandleUpdateAsync(_mapper, request, e => e.Id == request.Id);
         }
@@ -58,6 +62,14 @@ namespace Wallet.Application.Commands.WalletCommands
             var schemes = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == typeIs);
 
             return schemes.Count > 0;
+        }
+
+        private async Task<bool> IsWalletExist(string name, string walletId)
+        {
+            var matchingWallets = await _unitOfWork.WalletRepository
+                    .GetAllAsync(e => e.Name.ToLower().Trim() == name.ToLower().Trim());
+
+            return matchingWallets.Count > 0 && matchingWallets.Any(e => e.Id != walletId);
         }
     }
 }

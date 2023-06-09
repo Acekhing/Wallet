@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using Wallet.API.Middlewares;
 
 namespace Wallet.API.Extensions
 {
@@ -66,6 +67,12 @@ namespace Wallet.API.Extensions
             });
 
             return service;
+        }
+
+        public static IServiceCollection AddException(this IServiceCollection services)
+        {
+            services.AddTransient<ExceptionMiddleware>();
+            return services;
         }
     }
 }
