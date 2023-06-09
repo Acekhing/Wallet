@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
 using Wallet.Application.Contracts.Persistence;
 using Wallet.Application.Extensions;
 using Wallet.Application.Responses;
@@ -43,19 +41,19 @@ namespace Wallet.Application.Commands.WalletCommands
                 return response.Failed("Creation", "Account scheme does not exist");
             }
 
-           
+
             if (await IsValidWalletType(request.WalletTypeId) == false)
             {
                 return response.Failed("Creation", "Wallet type does not exist");
             }
 
-            
-            if(await IsWalletExist(request.Name) == true)
+
+            if (await IsWalletExist(request.Name) == true)
             {
                 return response.Failed("Creation", "Wallet exist with the same name");
             }
 
-            
+
             var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == request.UserId);
 
             if (results != null && results.Count == 5)

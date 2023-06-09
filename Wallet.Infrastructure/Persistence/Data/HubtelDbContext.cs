@@ -4,9 +4,9 @@ using Wallet.Infrastructure.Extensions;
 
 namespace Wallet.Infrastructure.Persistence.Data
 {
-    public class HubtelDbContext: IdentityDbContext<HubtelUser>
+    public class HubtelDbContext : IdentityDbContext<HubtelUser>
     {
-        public HubtelDbContext(DbContextOptions<HubtelDbContext> options):base(options)
+        public HubtelDbContext(DbContextOptions<HubtelDbContext> options) : base(options)
         {
 
         }

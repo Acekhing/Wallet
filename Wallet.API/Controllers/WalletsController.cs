@@ -7,7 +7,7 @@ using Wallet.Application.Queries.WalletQueries;
 
 namespace Wallet.API.Controllers
 {
-    [Authorize(Roles ="User")]
+    [Authorize(Roles = "User")]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class WalletsController : ControllerBase
