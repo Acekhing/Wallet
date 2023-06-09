@@ -7,5 +7,6 @@
         public string AccountSchemeId { get; set; }
         public string AccountNumber { get; set; }
         public string Owner { get; set; }
+        public string EncryptedAccountNumber { private get; set; }
     }
 }

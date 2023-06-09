@@ -7,6 +7,7 @@ using MediatR;
 using Wallet.Application.Contracts.Persistence;
 using Wallet.Application.Extensions;
 using Wallet.Application.Responses;
+using Wallet.Application.Utilities;
 
 namespace Wallet.Application.Commands.WalletCommands
 {
@@ -17,6 +18,7 @@ namespace Wallet.Application.Commands.WalletCommands
         public string WalletTypeId { get; set; }
         public string AccountSchemeId { get; set; }
         public string AccountNumber { get; set; }
+        public string EncryptedAccountNumber { get; set; }
         public string Owner { get; set; }
     }
 
@@ -57,7 +59,9 @@ namespace Wallet.Application.Commands.WalletCommands
             var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == request.UserId);
 
             if (results != null && results.Count == 5)
+            {
                 return response.Failed("Creation", MaxWalletMsg);
+            }
 
             SecureAccountnumber(request, out CreateWalletCommand securedAcnt);
 
@@ -74,6 +78,8 @@ namespace Wallet.Application.Commands.WalletCommands
                 Name = request.Name,
                 WalletTypeId = request.WalletTypeId,
                 AccountNumber = request.AccountNumber.Substring(0, 6),
+                EncryptedAccountNumber = CryptographyUtils.Encrypt(request.AccountNumber),
+                Owner = request.Owner,
             };
         }
 

@@ -35,7 +35,27 @@ namespace Wallet.API.Middlewares
                     Status = (int)HttpStatusCode.InternalServerError,
                     Type = "Server Error",
                     Title = "Internal server error",
-                    Detail = JsonConvert.SerializeObject(ex.Errors);
+                    Detail = JsonConvert.SerializeObject(ex.Errors)
+                };
+
+                string errorString = JsonConvert.SerializeObject(problem);
+
+                await context.Response.WriteAsync(errorString);
+
+                context.Response.ContentType = "application/json";
+            }
+            catch (EntityNotFoundException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                var problem = new ProblemDetails
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Type = "Server Error",
+                    Title = "Internal server error",
+                    Detail = JsonConvert.SerializeObject(ex.Message)
                 };
 
                 string errorString = JsonConvert.SerializeObject(problem);
