@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Wallet.Application.Configs;
 using Wallet.Application.Contracts.Auth;
 using Wallet.Application.DTOs.AuthModels;
@@ -26,8 +26,8 @@ namespace Wallet.Infrastructure.Persistence.Repositories
         private readonly JwtSettings _jwtSettings;
 
         public AuthService(
-            HubtelDbContext db, 
-            UserManager<HubtelUser> userManager, 
+            HubtelDbContext db,
+            UserManager<HubtelUser> userManager,
             SignInManager<HubtelUser> signInManager,
             IOptions<JwtSettings> options)
         {
@@ -40,12 +40,12 @@ namespace Wallet.Infrastructure.Persistence.Repositories
         public async Task<LoginResponse> LoginAsync(LoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            
+
             if (user == null)
                 throw new EntityNotFoundException($"User with {dto.Email} not found");
 
             var result = await _signInManager.PasswordSignInAsync(user, dto.Password, false, lockoutOnFailure: false);
-            
+
             if (!result.Succeeded)
                 throw new EntityNotFoundException($"Credentials for {dto.Email} are invalid");
 
@@ -53,6 +53,7 @@ namespace Wallet.Infrastructure.Persistence.Repositories
 
             return new LoginResponse
             {
+                UserId = user.Id,
                 Message = "Login success",
                 Sucess = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
@@ -87,7 +88,7 @@ namespace Wallet.Infrastructure.Persistence.Repositories
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "user");
-                    return response.Success(message:"Registration successfull");
+                    return response.Success(message: "Registration successfull");
                 }
                 else
                 {

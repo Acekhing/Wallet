@@ -2,7 +2,8 @@
 {
     public class LoginResponse
     {
-        public bool Sucess { get; set; } = false; 
+        public string UserId { get; set; } = string.Empty;
+        public bool Sucess { get; set; } = false;
         public string Message { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
     }
