@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Wallet.API.Extensions;
 using Wallet.API.Middlewares;
 using Wallet.Application.Extensions;
+using Wallet.Infrastructure.Configs;
 using Wallet.Infrastructure.Extensions;
 
 namespace Wallet.API
@@ -26,6 +28,9 @@ namespace Wallet.API
 
             services.AddSwagger();
 
+            // configure serilog
+            LogConfig.ConfigureLogger();
+
             services.AddException();
 
             services.AddApplicationServices();
@@ -44,6 +49,8 @@ namespace Wallet.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseAuthentication();
 

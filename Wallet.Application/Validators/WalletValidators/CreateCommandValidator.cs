@@ -8,6 +8,7 @@ namespace Wallet.Application.Validators.WalletValidators
         public CreateCommandValidator()
         {
             RuleFor(c => c.Name).NotEmpty().WithMessage("The name property is required");
+            RuleFor(e => e.Name).MaximumLength(150).WithMessage("Wallet name can not be more than 50 characters");
             RuleFor(c => c.UserId).NotEmpty().WithMessage("The user id property is required");
             RuleFor(c => c.WalletTypeId).NotEmpty().WithMessage("The wallet type id is required");
             RuleFor(c => c.AccountSchemeId).NotEmpty().WithMessage("The account schema is required");
