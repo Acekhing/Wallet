@@ -8,8 +8,8 @@ Admin login:
            UserId: 8e445865-a24d-4543-a6c6-9443d048cdb9
            
 # WebAPI with ASP.NET Core 3.1
-A simple Web API project that handles CRUD operations, authentication, authorization following the CQRS (Command Query Responsibility Segregation) and the Unit of work pattern.
-The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as the authentication server and MongoDB serving as the db server for wallets)
+A simple Web API project that handles CRUD operations, authentication, authorization and caching following the CQRS (Command Query Responsibility Segregation) and the Unit of work pattern.
+The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as the authentication server and MongoDB serving as the database for wallets). Also in the project, Redis is used for caching some part of data.
 
 ## Features
 
@@ -18,11 +18,13 @@ The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as 
 - Repository pattern: The repository pattern is used to abstract data access and provide a consistent interface for working with data.
 - API versioning: The project includes API versioning to manage and support different versions of the API.
 - Authentication and authorization: The project implements authentication and authorization mechanisms to secure access to API endpoints.
+- Caching using redis
 
 ## Prerequisites
 
 - .NET Core 3.1 SDK
 - MongoDB
+- Redis server
 
 ## Getting Started
 
@@ -35,7 +37,7 @@ The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as 
    dotnet build
 ```
 
-3. Configure the MongoDB and MSSQL connection in the appsettings.json file.
+3. Configure the MongoDB, MSSQL and Redis connection in the appsettings.json file
 4. Run the migration [package manager console in infrastructure layer]
 ```
    update-database
