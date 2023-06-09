@@ -18,7 +18,7 @@ The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as 
 - Repository pattern: The repository pattern is used to abstract data access and provide a consistent interface for working with data.
 - API versioning: The project includes API versioning to manage and support different versions of the API.
 - Authentication and authorization: The project implements authentication and authorization mechanisms to secure access to API endpoints.
-- Caching using redis
+- Caching: Caching is very important for readily accessed data. Here, Redis is used for caching wallet list.
 
 ## Prerequisites
 
