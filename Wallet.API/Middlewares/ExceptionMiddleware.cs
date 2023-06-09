@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using Wallet.Application.Exceptions;
 
 namespace Wallet.API.Middlewares
@@ -24,7 +24,7 @@ namespace Wallet.API.Middlewares
             {
                 await next(context);
             }
-            catch(ValidationCommandException ex)
+            catch (ValidationCommandException ex)
             {
                 _logger.LogError(ex, ex.Message);
 
