@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
 using Wallet.Application.Contracts.Persistence;
-using Wallet.Application.DTOs.WalletModels;
 using Wallet.Domain.Entities.WalletEntities;
 
 namespace Wallet.Application.Queries.WalletQueries
@@ -16,21 +17,33 @@ namespace Wallet.Application.Queries.WalletQueries
     public class GetAllWalletsQueryHandler : IRequestHandler<GetAllWalletsQuery, IList<HubtelWallet>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
         private readonly IMapper _mapper;
+        private const string cachepath = "wallets/all";
 
-        public GetAllWalletsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetAllWalletsQueryHandler(IUnitOfWork unitOfWork, ICacheService cacheService, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
             _mapper = mapper;
         }
 
         public async Task<IList<HubtelWallet>> Handle(GetAllWalletsQuery request, CancellationToken cancellationToken)
         {
-            var results = await _unitOfWork.WalletRepository.GetAllAsync();
+            // Check cache data
+            var cachedata = _cacheService.GetData<List<HubtelWallet>>(cachepath);
+            if (cachedata != null && cachedata.Count > 0)
+                return cachedata;
 
-            //return _mapper.Map<IList<GetWalletDto>>(results);
+            cachedata = (await _unitOfWork.WalletRepository.GetAllAsync()).ToList();
 
-            return results;
+            if (cachedata.Count > 0)
+            {
+                var expiryTime = DateTimeOffset.Now.AddSeconds(50); // expiry time
+                _cacheService.SetData(cachepath, cachedata, expiryTime); // set cached data
+            }
+
+            return cachedata;
         }
     }
 }

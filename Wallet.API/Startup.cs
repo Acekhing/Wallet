@@ -26,6 +26,8 @@ namespace Wallet.API
 
             services.AddSwagger();
 
+            services.AddRateLimiters();
+
             services.AddException();
 
             services.AddApplicationServices();
@@ -35,6 +37,8 @@ namespace Wallet.API
             services.AddMongoDb(Configuration);
 
             services.AddRepositories();
+
+            services.AddCaching(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

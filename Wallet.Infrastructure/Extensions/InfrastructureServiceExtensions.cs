@@ -5,11 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using System.Text;
+using StackExchange.Redis;
 using System;
+using System.Text;
 using Wallet.Application.Configs;
 using Wallet.Application.Contracts.Auth;
 using Wallet.Application.Contracts.Persistence;
+using Wallet.Infrastructure.Persistence.Caching;
 using Wallet.Infrastructure.Persistence.Data;
 using Wallet.Infrastructure.Persistence.Repositories;
 
@@ -20,11 +22,11 @@ namespace Wallet.Infrastructure.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepositry<>));
-            services.AddTransient<IUnitOfWork,UnitOfWork>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IWalletTypeRepository, WalletTypeRepository>();
             services.AddTransient<IWalletRepository, WalletRepository>();
             services.AddTransient<IAccountSchemeRepository, AccountSchemeRepository>();
-            
+
             return services;
         }
 
@@ -43,7 +45,7 @@ namespace Wallet.Infrastructure.Extensions
 
             return services;
         }
-        
+
         public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
@@ -56,7 +58,7 @@ namespace Wallet.Infrastructure.Extensions
             services.AddIdentity<HubtelUser, IdentityRole>()
                 .AddEntityFrameworkStores<HubtelDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddAuthentication(options =>
@@ -79,6 +81,18 @@ namespace Wallet.Infrastructure.Extensions
                 };
             });
 
+            return services;
+        }
+
+        public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
+        {
+            //services.AddScoped<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(configuration.GetValue<string>("RedisConnection")));
+            services.AddScoped<IDatabase>(sp =>
+            {
+                var connection = ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection"));
+                return connection.GetDatabase();
+            });
+            services.AddScoped<ICacheService, CacheService>();
             return services;
         }
     }

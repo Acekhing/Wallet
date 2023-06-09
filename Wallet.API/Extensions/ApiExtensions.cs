@@ -74,5 +74,11 @@ namespace Wallet.API.Extensions
             services.AddTransient<ExceptionMiddleware>();
             return services;
         }
+
+        public static IServiceCollection AddRateLimiters(this IServiceCollection services)
+        {
+            // implemet rate limiting
+            return services;
+        }
     }
 }

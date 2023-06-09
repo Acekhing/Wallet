@@ -45,7 +45,6 @@ namespace Wallet.API.Controllers
             return Ok(results);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CreateWallet([FromBody] CreateWalletCommand command)
         {
