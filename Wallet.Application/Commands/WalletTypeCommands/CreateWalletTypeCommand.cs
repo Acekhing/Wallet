@@ -29,10 +29,10 @@ namespace Wallet.Application.Commands.WalletTypeCommands
         {
             var response = new BaseReponse();
 
-            // Get existing wallet type
-            var type = await _unitOfWork.WalletTypeRepository.GetByNameAsync(request.Name);
+            var results = await _unitOfWork.WalletTypeRepository
+                                .GetAllAsync(e => e.Name.ToLower().Trim() == request.Name.ToLower().Trim());
 
-            if (type != null) // Checking if wallet type already exist. 
+            if (results.Count > 0)
                 return response.Failed("Creation", DuplicateMsg);
 
             // Delegate task to the general create execution

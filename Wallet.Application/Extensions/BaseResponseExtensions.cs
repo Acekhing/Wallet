@@ -5,7 +5,7 @@ namespace Wallet.Application.Extensions
 {
     public static class BaseResponseExtensions
     {
-        public static BaseReponse Success(this BaseReponse response, string id, string message)
+        public static BaseReponse Success(this BaseReponse response, string? id = null, string? message = null)
         {
             response.Id = id;
             response.Message = message;

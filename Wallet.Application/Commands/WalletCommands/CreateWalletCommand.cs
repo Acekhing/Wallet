@@ -32,13 +32,36 @@ namespace Wallet.Application.Commands.WalletCommands
 
         public async Task<BaseReponse> Handle(CreateWalletCommand request, CancellationToken cancellationToken)
         {
-            var results = await _unitOfWork.WalletRepository.GetUserWallets(request.UserId);
+            var response = new BaseReponse();
+
+            if (await IsValidAccountScheme(request.AccountSchemeId) == false)
+                return response.Failed("Creation","Account scheme does not exist");
+
+            if (await IsValidWalletType(request.WalletTypeId) == false)
+                return response.Failed("Creation", "Wallet type does not exist");
+
+            var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == request.UserId);
 
             if (results != null && results.Count == 5)
-                return new BaseReponse { Message = "Action failed.", Success = false, Errors = new List<string> { MaxWalletMsg } };
+                return response.Failed("Creation", MaxWalletMsg);
 
             // Delegate task to the general create execution
             return await _unitOfWork.WalletRepository.HandleCreateAsync(_mapper, request);
+        }
+
+        private async Task<bool> IsValidAccountScheme(string schemeId)
+        {
+            var schemes = await _unitOfWork.AccountSchemeRepository.GetAllAsync(e => e.Id == schemeId);
+
+            return schemes.Count > 0;
+
+        }
+
+        private async Task<bool> IsValidWalletType(string typeIs)
+        {
+            var schemes = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == typeIs);
+
+            return schemes.Count > 0;
         }
     }
 }

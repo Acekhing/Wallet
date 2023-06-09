@@ -24,7 +24,7 @@ namespace Wallet.Application.Commands.WalletCommands
         public async Task<BaseReponse> Handle(DeleteWalletCommand request, CancellationToken cancellationToken)
         {
             // Delegate task to the general create execution
-            return await _unitOfWork.WalletRepository.HandleDeleteAsync(request.Id);
+            return await _unitOfWork.WalletRepository.HandleDeleteAsync(e => e.Id == request.Id);
         }
     }
 }

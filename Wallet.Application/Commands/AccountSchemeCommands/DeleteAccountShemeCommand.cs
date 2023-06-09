@@ -24,7 +24,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         public async Task<BaseReponse> Handle(DeleteAccountShemeCommand request, CancellationToken cancellationToken)
         {
             // Delegate task to the general create execution
-            return await _unitOfWork.AccountSchemeRepository.HandleDeleteAsync(request.Id);
+            return await _unitOfWork.AccountSchemeRepository.HandleDeleteAsync(e => e.Id == request.Id);
         }
     }
 }

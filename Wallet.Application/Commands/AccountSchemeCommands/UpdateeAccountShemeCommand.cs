@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,7 +12,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
 {
     public class UpdateeAccountShemeCommand : IRequest<BaseReponse>
     {
-        public string Id { get; private set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public DateTime EditedAt { get; set; }
         public string WalletTypeId { get; set; }
@@ -33,13 +34,15 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             var response = new BaseReponse();
 
-            var scheme = await _unitOfWork.AccountSchemeRepository.GetByNameAsync(request.Name);
+            var scheme = (await _unitOfWork.AccountSchemeRepository
+                        .GetAllAsync(e => e.Name == request.Name.ToLower().Trim()))
+                        .FirstOrDefault();
 
-            if (scheme != null && scheme.Id != request.Id) // Checking if wallet type already exist. 
+            if (scheme != null && scheme.Id != request.Id)
                 return response.Failed("Update", DuplicateMsg);
 
             // Delegate task to the general update execution
-            return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request, request.Id);
+            return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request, e => e.Id == request.Id);
         }
     }
 

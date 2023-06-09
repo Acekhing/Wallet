@@ -12,6 +12,7 @@ namespace Wallet.API.Extensions
             // adds swagger service to service collections
             service.AddSwaggerGen(opt =>
             {
+
                 opt.EnableAnnotations();
 
                 // Add authorization header

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,7 +12,7 @@ namespace Wallet.Application.Commands.WalletTypeCommands
 {
     public class UpdateWalletTypeCommand : IRequest<BaseReponse>
     {
-        public string Id { get; private set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public DateTime EditedAt { get; set; }
     }
@@ -32,14 +33,15 @@ namespace Wallet.Application.Commands.WalletTypeCommands
         {
             var response = new BaseReponse();
 
-            // Get existing wallet type
-            var type = await _unitOfWork.WalletTypeRepository.GetByNameAsync(request.Name);
+            var result = (await _unitOfWork.WalletTypeRepository
+                        .GetAllAsync(e => e.Name.ToLower() == request.Name.ToLower().Trim()))
+                        .FirstOrDefault();
 
-            if (type != null && type.Id != request.Id) // Checking if wallet type already exist. 
+            if (result != null && result.Id != request.Id)
                 return response.Failed("Update", DuplicateMsg);
 
             // Delegate task to the general update execution
-            return await _unitOfWork.WalletTypeRepository.HandleUpdateAsync(_mapper, request, request.Id);
+            return await _unitOfWork.WalletTypeRepository.HandleUpdateAsync(_mapper, request, e => e.Id == request.Id);
         }
     }
 }

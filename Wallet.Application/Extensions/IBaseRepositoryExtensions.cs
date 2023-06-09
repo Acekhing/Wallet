@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoMapper;
 using Wallet.Application.Contracts.Persistence;
 using Wallet.Application.Exceptions;
@@ -9,59 +12,58 @@ namespace Wallet.Application.Extensions
     public static class IBaseRepositoryExtensions
     {
         public static async Task<BaseReponse> HandleCreateAsync<TEntity, TPayload>(
-            this IBaseRepository<TEntity> repository, IMapper mapper, TPayload payload)
-            where TEntity : class where TPayload : class
+            this IBaseRepository<TEntity> repository, 
+            IMapper mapper, 
+            TPayload payload) where TEntity : class where TPayload : class
         {
-            var response = new BaseReponse(); // Create a response object
+            var response = new BaseReponse();
 
-            var entity = mapper.Map<TEntity>(payload); // Map payload to domain entity
+            var entity = mapper.Map<TEntity>(payload);
 
-            var id = await repository.CreateAsync(entity); // Create record
+            await repository.CreateAsync(entity);
 
-            if (!string.IsNullOrEmpty(id))
-                return response.Success(id, $"{nameof(TEntity)} created successfully");
-
-            return response.Failed("Create", "Could not create record");
+            return response.Success(message:"Record created successfully");
         }
 
         public static async Task<BaseReponse> HandleUpdateAsync<TEntity, TPayload>(
-            this IBaseRepository<TEntity> repository, IMapper mapper, TPayload payload, string id)
-            where TEntity : class where TPayload : class
+            this IBaseRepository<TEntity> repository, 
+            IMapper mapper, 
+            TPayload payload,
+            Expression<Func<TEntity,bool>> predicate
+            ) where TEntity : class where TPayload : class
         {
-            var response = new BaseReponse(); // Create a response object
+            var response = new BaseReponse();
 
-            // Check if record exist
-            var existingRecord = await repository.GetByIdAsync(id);
+            var existingRecords = await repository.GetAllAsync(predicate);
 
-            if (existingRecord == null)
+            if (existingRecords.Count == 0)
                 throw new EntityNotFoundException("The record you are trying to update does not exist");
 
-            var entity = mapper.Map(payload, existingRecord); // Map payload to domain entity
+            var entity = mapper.Map(payload, existingRecords.First());
 
-            id = await repository.UpdateAsync(entity); // update record
+            var result = await repository.UpdateAsync(entity, predicate);
 
-            if (!string.IsNullOrEmpty(id))
-                return response.Success(id, $"{nameof(TEntity)} created successfully");
+            if (result == true)
+                return response.Success(message:"Record updated successfully");
 
             return response.Failed("Update", "Could not update record");
         }
 
         public static async Task<BaseReponse> HandleDeleteAsync<TEntity>(
-            this IBaseRepository<TEntity> repository, string id)
-            where TEntity : class where TPayload : class
+            this IBaseRepository<TEntity> repository,
+            Expression<Func<TEntity, bool>> predicate) where TEntity : class
         {
-            var response = new BaseReponse(); // Create a response object
+            var response = new BaseReponse();
 
-            // Check if record exist
-            var existingRecord = await repository.GetByIdAsync(id);
+            var existingRecords = await repository.GetAllAsync(predicate);
 
-            if (existingRecord == null)
+            if (existingRecords.Count == 0)
                 throw new EntityNotFoundException("The record you are trying to delete does not exist");
 
-            var result = await repository.DeleteAsync(id); // delete record
+            var result = await repository.DeleteAsync(predicate);
 
             if (result == true)
-                return response.Success(id, $"{nameof(TEntity)} created successfully");
+                return response.Success(message:"Record created successfully");
 
             return response.Failed("Delete", "Could not delete record");
         }

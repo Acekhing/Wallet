@@ -5,14 +5,15 @@ using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
 using Wallet.Application.DTOs.WalletModels;
+using Wallet.Domain.Entities.WalletEntities;
 
 namespace Wallet.Application.Queries.WalletQueries
 {
-    public class GetAllWalletsQuery : IRequest<IList<GetWalletDto>>
+    public class GetAllWalletsQuery : IRequest<IList<HubtelWallet>>
     {
     }
 
-    public class GetAllWalletsQueryHandler : IRequestHandler<GetAllWalletsQuery, IList<GetWalletDto>>
+    public class GetAllWalletsQueryHandler : IRequestHandler<GetAllWalletsQuery, IList<HubtelWallet>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -23,11 +24,13 @@ namespace Wallet.Application.Queries.WalletQueries
             _mapper = mapper;
         }
 
-        public async Task<IList<GetWalletDto>> Handle(GetAllWalletsQuery request, CancellationToken cancellationToken)
+        public async Task<IList<HubtelWallet>> Handle(GetAllWalletsQuery request, CancellationToken cancellationToken)
         {
             var results = await _unitOfWork.WalletRepository.GetAllAsync();
 
-            return _mapper.Map<IList<GetWalletDto>>(results);
+            //return _mapper.Map<IList<GetWalletDto>>(results);
+
+            return results;
         }
     }
 }

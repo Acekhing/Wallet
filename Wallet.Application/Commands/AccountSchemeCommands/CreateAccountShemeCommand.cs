@@ -30,10 +30,10 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             var response = new BaseReponse();
 
-            // Check if account scheme does not exist
-            var scheme = await _unitOfWork.AccountSchemeRepository.GetByNameAsync(request.Name);
+            var scheme = await _unitOfWork.AccountSchemeRepository
+                            .GetAllAsync(e => e.Name == e.Name.ToLower().Trim());
 
-            if (scheme != null) // Checking if wallet type already exist. 
+            if (scheme.Count > 0)
                 return response.Failed("Creation", DuplicateMsg);
 
             // Delegate task to the general create execution

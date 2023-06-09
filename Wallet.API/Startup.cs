@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wallet.API.Extensions;
+using Wallet.Application.Extensions;
+using Wallet.Infrastructure.Extensions;
 
 namespace Wallet.API
 {
@@ -22,6 +24,14 @@ namespace Wallet.API
             services.AddControllers();
 
             services.AddSwagger();
+
+            services.AddApplicationServices();
+
+            services.AddIdentity(Configuration);
+
+            services.AddMongoDb(Configuration);
+
+            services.AddRepositories();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,6 +41,8 @@ namespace Wallet.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hubtel Wallets Api V1"));
