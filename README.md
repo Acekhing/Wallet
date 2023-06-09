@@ -36,8 +36,8 @@ The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as 
 ```
 
 3. Configure the MongoDB and MSSQL connection in the appsettings.json file.
-4. Run the migration
-```package manager console in infrastructure layer
+4. Run the migration [package manager console in infrastructure layer]
+```
    update-database
 ```
 
