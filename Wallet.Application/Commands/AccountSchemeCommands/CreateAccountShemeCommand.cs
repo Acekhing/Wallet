@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -30,6 +31,9 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             var response = new BaseReponse();
 
+            if(await IsWalletTypeExist(request.WalletTypeId) == false)
+                return response.Failed("Creation", "Wallet type does not exist");
+
             var scheme = await _unitOfWork.AccountSchemeRepository
                             .GetAllAsync(e => e.Name == e.Name.ToLower().Trim());
 
@@ -38,6 +42,13 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
 
             // Delegate task to the general create execution
             return await _unitOfWork.AccountSchemeRepository.HandleCreateAsync(_mapper, request);
+        }
+
+        private async Task<bool> IsWalletTypeExist(string walletTypeId)
+        {
+            var result = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == walletTypeId);
+
+            return result.Count > 0;
         }
     }
 }
