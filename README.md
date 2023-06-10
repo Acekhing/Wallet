@@ -47,13 +47,14 @@ All features are listed below:
 ## Getting Started
 
 1. Clone the repository:
-   ```shell
+```shell
    git clone [https://github.com/Acekhing/Wallet.git]
-   
+```
+ 
 2. Run docker compose
-   ```shell
+```shell
    docker-compose up -d
-   ```
+```
    
 3. Build the solution:
 ```shell
