@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Wallet.Application.Contracts.Persistence;
+using Wallet.Application.Utilities;
 using Wallet.Domain.Entities.WalletEntities;
 
 namespace Wallet.Application.Queries.WalletQueries
@@ -19,31 +20,27 @@ namespace Wallet.Application.Queries.WalletQueries
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        private readonly IMapper _mapper;
-        private const string cachepath = "wallets/user";
+        private const string cachekey = "wallets/user";
 
-        public GetAllUserWalletQueryHandler(IUnitOfWork unitOfWork, ICacheService cacheService, IMapper mapper)
+        public GetAllUserWalletQueryHandler(IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
-            _mapper = mapper;
         }
 
         public async Task<IList<HubtelWallet>> Handle(GetAllUserWalletQuery request, CancellationToken cancellationToken)
         {
             // Check cache data
-            var cachedata = _cacheService.GetData<List<HubtelWallet>>(cachepath);
+            var cachedata = _cacheService.GetData<List<HubtelWallet>>(cachekey);
             if (cachedata != null && cachedata.Count > 0)
                 return cachedata;
 
             // Get data from database
-            cachedata = (await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == request.UserId)).ToList();
+            cachedata = (await _unitOfWork.WalletRepository
+                        .GetAllAsync(e => e.UserId == request.UserId)).ToList();
 
-            if (cachedata.Count > 0)
-            {
-                var expiryTime = DateTimeOffset.Now.AddSeconds(50); // expiry time
-                _cacheService.SetData(cachepath, cachedata, expiryTime); // set cached data
-            }
+            if (cachedata.Count > 0) // cache data
+                _cacheService.SetCacheData(cachekey, cachedata);
 
             return cachedata;
         }

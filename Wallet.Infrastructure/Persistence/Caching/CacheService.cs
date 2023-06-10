@@ -20,15 +20,6 @@ namespace Wallet.Infrastructure.Persistence.Caching
             return JsonConvert.DeserializeObject<T>(data);
         }
 
-        public object RemoveData(string key)
-        {
-            var exist = _cacheDb.KeyExists(key);
-
-            if (!exist) return false;
-
-            return _cacheDb.KeyDelete(key);
-        }
-
         public bool SetData<T>(string key, T value, DateTimeOffset expirationTime)
         {
             // calculates the time difference between a given expiration time and current time

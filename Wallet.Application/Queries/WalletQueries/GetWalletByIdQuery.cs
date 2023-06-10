@@ -32,8 +32,6 @@ namespace Wallet.Application.Queries.WalletQueries
                             .GetAllAsync(e => e.Id == request.WalletId && e.UserId == request.UserId))
                             .FirstOrDefault();
 
-            //return _mapper.Map<GetWalletDto>(result);
-
             return result;
         }
     }
