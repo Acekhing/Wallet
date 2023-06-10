@@ -78,3 +78,10 @@ All features are listed below:
 <br/>
 <br/>
 <br/>
+
+### Account Scheme
+![account-scheme](https://github.com/Acekhing/Wallet/assets/65813017/c0acd850-8c73-432b-83bb-4fc05eb3ae63)
+### Wallet type
+![wallet-type](https://github.com/Acekhing/Wallet/assets/65813017/1689f4e2-2de8-47c5-bf30-f205bd652011)
+### Wallet
+![wallet](https://github.com/Acekhing/Wallet/assets/65813017/c6742376-af72-446e-add4-7b1fc8987da3)
