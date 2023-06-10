@@ -17,13 +17,14 @@ All features are listed below:
 
 ## Features
 
+- Caching: Caching is very important for readily accessed data. Here, Redis is used for caching wallet list.
+- Logging: The project uses serilog for logging and sinks into Elastic search and visualize using kibana
 - Clean architecture: The project follows a modular and layered architecture to ensure separation of concerns and maintainability.
 - CQRS pattern: Command Query Responsibility Segregation (CQRS) is implemented to separate read and write operations, improving performance and scalability.
 - Repository pattern: The repository pattern is used to abstract data access and provide a consistent interface for working with data.
 - API versioning: The project includes API versioning to manage and support different versions of the API.
 - Authentication and authorization: The project implements authentication and authorization mechanisms to secure access to API endpoints.
-- Caching: Caching is very important for readily accessed data. Here, Redis is used for caching wallet list.
-- Logging: The project uses serilog for logging and sinks into Elastic search and visualize using kibana
+
 
 ## Prerequisites
 
