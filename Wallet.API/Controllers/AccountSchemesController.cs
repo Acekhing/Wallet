@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Wallet.API.Extensions;
 using Wallet.Application.Commands.AccountSchemeCommands;
 using Wallet.Application.Queries.AccountSchemeQueries;
 
@@ -15,53 +15,34 @@ namespace Wallet.API.Controllers
     {
         private readonly IMediator _mediator;
 
-        public AccountSchemesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public AccountSchemesController(IMediator mediator) => _mediator = mediator;
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(string? search = null)
+        public async Task<IActionResult> GetAll()
         {
-            var results = await _mediator.Send(new GetAllAccountSchemesQuery { Search = search});
-
-            return Ok(results);
+            return await _mediator.HandleQuery(this, new GetAllAccountSchemesQuery());
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateAccountShemeCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateAccountShemeCommand command) 
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.HandleCommand(this, command);
         }
 
 
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] UpdateeAccountShemeCommand command)
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.HandleCommand(this, command);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] DeleteAccountShemeCommand command)
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.HandleCommand(this, command);
         }
+
     }
 }
