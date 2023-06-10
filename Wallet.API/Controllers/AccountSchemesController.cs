@@ -22,9 +22,9 @@ namespace Wallet.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string? search = null)
         {
-            var results = await _mediator.Send(new GetAllAccountSchemesQuery());
+            var results = await _mediator.Send(new GetAllAccountSchemesQuery { Search = search});
 
             return Ok(results);
         }

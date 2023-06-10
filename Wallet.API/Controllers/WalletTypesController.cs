@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Wallet.Application.Commands.WalletTypeCommands;
@@ -21,9 +20,9 @@ namespace Wallet.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string? search = null)
         {
-            var results = await _mediator.Send(new GetAllWalletTypeQuery()); ;
+            var results = await _mediator.Send(new GetAllWalletTypeQuery { Search = search }); ;
 
             return Ok(results);
         }
