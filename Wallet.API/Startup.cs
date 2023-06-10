@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Wallet.API.Extensions;
 using Wallet.API.Middlewares;
 using Wallet.Application.Extensions;
@@ -25,6 +26,8 @@ namespace Wallet.API
             services.AddControllers();
 
             services.AddSwagger();
+
+            services.ConfigureSerilog(Configuration);
 
             services.AddRateLimiters();
 

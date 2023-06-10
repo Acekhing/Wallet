@@ -5,8 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Elasticsearch;
 using StackExchange.Redis;
 using System;
+using System.Reflection;
 using System.Text;
 using Wallet.Application.Configs;
 using Wallet.Application.Contracts.Auth;
@@ -94,6 +98,42 @@ namespace Wallet.Infrastructure.Extensions
             });
             services.AddScoped<ICacheService, CacheService>();
             return services;
+        }
+
+        public static IServiceCollection ConfigureSerilog(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Get runing environment
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            //var configurationRoot = new ConfigurationBuilder()
+            //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            //    .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+            //    .Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Console()
+                .WriteTo.Debug()
+                .WriteTo.Elasticsearch(ConfigureElasticSearch(configuration, environment))
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(configuration)
+               .CreateLogger();
+
+            return services;
+        }
+
+        private static ElasticsearchSinkOptions ConfigureElasticSearch(IConfiguration configuration, string environment)
+        {
+            var assemblyname = Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-");
+            var indexformat = $"{assemblyname}-{environment.ToLower()}-{DateTime.UtcNow:yyyy-MM}";
+
+            return new ElasticsearchSinkOptions(new Uri(configuration.GetConnectionString("ElasticConnection")))
+            {
+                AutoRegisterTemplate = true,
+                IndexFormat = indexformat,
+                NumberOfReplicas = 1,
+            };
         }
     }
 }
