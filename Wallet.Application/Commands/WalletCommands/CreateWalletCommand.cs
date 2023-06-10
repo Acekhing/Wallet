@@ -58,6 +58,7 @@ namespace Wallet.Application.Commands.WalletCommands
 
             if (results != null && results.Count == 5)
             {
+                // Exceeded max wallet threshold
                 return response.Failed("Creation", MaxWalletMsg);
             }
 
@@ -75,8 +76,8 @@ namespace Wallet.Application.Commands.WalletCommands
                 AccountSchemeId = request.AccountSchemeId,
                 Name = request.Name,
                 WalletTypeId = request.WalletTypeId,
-                AccountNumber = request.AccountNumber.Substring(0, 6),
-                EncryptedAccountNumber = CryptographyUtils.Encrypt(request.AccountNumber),
+                AccountNumber = request.AccountNumber.Substring(0, 6), // take only first 6 characers 
+                EncryptedAccountNumber = CryptographyUtils.Encrypt(request.AccountNumber), // encrypt original account number
                 Owner = request.Owner,
             };
         }
