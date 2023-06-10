@@ -55,6 +55,7 @@ namespace Wallet.API
             app.UseAuthentication();
 
             app.UseSwagger();
+            
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hubtel Wallets Api V1"));
 
             app.UseHttpsRedirection();

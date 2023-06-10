@@ -46,21 +46,28 @@ namespace Wallet.API.Middlewares
 
         private async Task HandleException(HttpContext context, string message)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var problem = new ProblemDetails
+            if(!context.Response.HasStarted)
             {
-                Status = (int)HttpStatusCode.InternalServerError,
-                Type = "Server Error",
-                Title = "Internal server error",
-                Detail = message
-            };
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            string errorString = JsonConvert.SerializeObject(problem);
+                var problem = new ProblemDetails
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Type = "Server Error",
+                    Title = "Internal server error",
+                    Detail = message
+                };
 
-            await context.Response.WriteAsync(errorString);
+                string errorString = JsonConvert.SerializeObject(problem);
 
-            context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(errorString);
+
+                context.Response.ContentType = "application/json";
+            }
+            else
+            {
+                 await context.Response.WriteAsync(message);
+            }
         }
     }
 }
