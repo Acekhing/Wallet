@@ -23,8 +23,20 @@ The project is built with ASP.NET Core 3.1 with two databases (MSSQL serving as 
 ## Prerequisites
 
 - .NET Core 3.1 SDK
-- MongoDB
+- Docker
 - Redis server
+
+## Required Docker images
+- Elastic search 8.7.1
+- kibana 8.7.1
+- Mongo latest
+- Mongo-express latest
+
+## Access points
+- Elastic search [http://localhost:9200]
+- kibana [http://localhost:5601]
+- Mongo db [http://localhost:27017]
+- Mongo express [http://localhost:8081]
 
 ## Getting Started
 
