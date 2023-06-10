@@ -38,8 +38,8 @@ services:
     restart: always
 
   mongo-express:
-    image: mongo-express
     container_name: mexpress
+    image: mongo-express
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
@@ -54,6 +54,15 @@ services:
     ports:
       - 8081:8081
 
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - 6379:6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - elastic
     
 networks:
   elastic:

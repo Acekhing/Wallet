@@ -49,7 +49,7 @@ namespace Wallet.API.Middlewares
             if(!context.Response.HasStarted)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
+                
                 var problem = new ProblemDetails
                 {
                     Status = (int)HttpStatusCode.InternalServerError,
@@ -60,9 +60,9 @@ namespace Wallet.API.Middlewares
 
                 string errorString = JsonConvert.SerializeObject(problem);
 
-                await context.Response.WriteAsync(errorString);
-
                 context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsync(errorString);
             }
             else
             {
