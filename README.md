@@ -29,7 +29,7 @@ All features are listed below:
 ## Prerequisites
 
 - .NET Core 3.1 SDK
-- Docker
+- Docker desktop
 - Redis server
 
 ## Required Docker images
