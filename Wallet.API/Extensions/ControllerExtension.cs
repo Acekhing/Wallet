@@ -7,7 +7,7 @@ namespace Wallet.API.Extensions
 {
     public static class ControllerExtension
     {
-        public static async Task<IActionResult> HandleCommand<TCommand>
+        public static async Task<IActionResult> SendCommand<TCommand>
         (
             this IMediator _mediator, ControllerBase controller ,TCommand command
         ) 
@@ -21,7 +21,7 @@ namespace Wallet.API.Extensions
             return controller.BadRequest(results.Errors);
         }
 
-        public static async Task<IActionResult> HandleQuery<TCommand>
+        public static async Task<IActionResult> SendQuery<TCommand>
         (
              this IMediator _mediator, ControllerBase controller, TCommand command
         )

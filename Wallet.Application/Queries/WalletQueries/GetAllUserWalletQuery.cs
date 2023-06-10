@@ -6,17 +6,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Wallet.Application.Contracts.Persistence;
+using Wallet.Application.Responses;
 using Wallet.Application.Utilities;
 using Wallet.Domain.Entities.WalletEntities;
 
 namespace Wallet.Application.Queries.WalletQueries
 {
-    public class GetAllUserWalletQuery : IRequest<IList<HubtelWallet>>
+    public class GetAllUserWalletQuery : IRequest<QueryResponse>
     {
         public string UserId { get; set; }
     }
 
-    public class GetAllUserWalletQueryHandler : IRequestHandler<GetAllUserWalletQuery, IList<HubtelWallet>>
+    public class GetAllUserWalletQueryHandler : IRequestHandler<GetAllUserWalletQuery, QueryResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
@@ -28,12 +29,12 @@ namespace Wallet.Application.Queries.WalletQueries
             _cacheService = cacheService;
         }
 
-        public async Task<IList<HubtelWallet>> Handle(GetAllUserWalletQuery request, CancellationToken cancellationToken)
+        public async Task<QueryResponse> Handle(GetAllUserWalletQuery request, CancellationToken cancellationToken)
         {
             // Check cache data
             var cachedata = _cacheService.GetData<List<HubtelWallet>>(cachekey);
             if (cachedata != null && cachedata.Count > 0)
-                return cachedata;
+                return new QueryResponse { Data = cachedata, Success = true };
 
             // Get data from database
             cachedata = (await _unitOfWork.WalletRepository
@@ -42,7 +43,7 @@ namespace Wallet.Application.Queries.WalletQueries
             if (cachedata.Count > 0) // cache data
                 _cacheService.SetCacheData(cachekey, cachedata);
 
-            return cachedata;
+            return new QueryResponse { Data = cachedata, Success = true };
         }
     }
 }

@@ -21,27 +21,27 @@ namespace Wallet.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return await _mediator.HandleQuery(this, new GetAllAccountSchemesQuery());
+            return await _mediator.SendQuery(this, new GetAllAccountSchemesQuery());
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateAccountShemeCommand command) 
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
 
 
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] UpdateeAccountShemeCommand command)
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] DeleteAccountShemeCommand command)
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
 
     }

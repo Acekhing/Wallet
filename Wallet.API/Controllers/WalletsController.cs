@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Wallet.API.Extensions;
 using Wallet.Application.Commands.WalletCommands;
+using Wallet.Application.Queries.AccountSchemeQueries;
 using Wallet.Application.Queries.WalletQueries;
 
 namespace Wallet.API.Controllers
@@ -14,68 +16,45 @@ namespace Wallet.API.Controllers
     {
         private readonly IMediator _mediator;
 
-        public WalletsController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public WalletsController(IMediator mediator) => _mediator = mediator;
 
 
         [HttpGet]
         public async Task<IActionResult> GetUserWallets(string userId)
         {
-            var results = await _mediator.Send(new GetAllUserWalletQuery { UserId = userId });
+            return await _mediator.SendQuery(this, new GetAllUserWalletQuery { UserId = userId });
 
-            return Ok(results);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetWalletById(string userId, string walletId)
         {
-            var results = await _mediator.Send(new GetWalletByIdQuery { UserId = userId, WalletId = walletId });
-
-            return Ok(results);
+            return await _mediator.SendQuery(this, new GetWalletByIdQuery { UserId = userId, WalletId = walletId });
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllWallets()
         {
-            var results = await _mediator.Send(new GetAllWalletsQuery());
-
-            return Ok(results);
+            return await _mediator.SendQuery(this, new GetAllWalletsQuery());
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateWallet([FromBody] CreateWalletCommand command)
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.SendCommand(this, command);
         }
 
         [HttpPatch]
         public async Task<IActionResult> UpdateWallet([FromBody] UpdateWalletCommand command)
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.SendCommand(this, command);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteWallet([FromBody] DeleteWalletCommand command)
         {
-            var results = await _mediator.Send(command);
-
-            if (results.Success == true)
-                return Ok(results);
-
-            return BadRequest(results.Errors);
+            return await _mediator.SendCommand(this, command);
         }
     }
 }

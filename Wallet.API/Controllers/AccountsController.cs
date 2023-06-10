@@ -12,10 +12,7 @@ namespace Wallet.API.Controllers
     {
         private readonly IMediator _mediator;
 
-        public AccountsController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public AccountsController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)

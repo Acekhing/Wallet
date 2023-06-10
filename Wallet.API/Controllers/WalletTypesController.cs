@@ -20,26 +20,25 @@ namespace Wallet.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return await _mediator.HandleQuery(this, new GetAllWalletTypeQuery());
+            return await _mediator.SendQuery(this, new GetAllWalletTypeQuery());
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateWalletTypeCommand command)
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
 
         [HttpPatch]
         public async Task<IActionResult> Update([FromBody] UpdateWalletTypeCommand command)
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] DeleteWalletTypeCommand command)
         {
-            return await _mediator.HandleCommand(this, command);
+            return await _mediator.SendCommand(this, command);
         }
     }
 }
