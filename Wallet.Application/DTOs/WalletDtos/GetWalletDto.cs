@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Wallet.Application.DTOs.WalletModels
+namespace Wallet.Application.DTOs.WalletDtos
 {
     public class GetWalletDto
     {

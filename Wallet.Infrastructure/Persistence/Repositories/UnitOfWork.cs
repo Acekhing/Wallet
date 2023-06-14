@@ -7,13 +7,13 @@ namespace Wallet.Infrastructure.Persistence.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IWalletRepository _walletRepository;
-        private readonly IWalletTypeRepository _walletTypeRepository;
+        private readonly IAccountTypeRepository _walletTypeRepository;
         private readonly IAccountSchemeRepository _accountSchemeRepository;
         private readonly IAuthService _authService;
 
         public UnitOfWork(
             IWalletRepository walletRepository, 
-            IWalletTypeRepository walletTypeRepository, 
+            IAccountTypeRepository walletTypeRepository, 
             IAccountSchemeRepository accountSchemeRepository,
             IAuthService authService)
         {
@@ -25,7 +25,7 @@ namespace Wallet.Infrastructure.Persistence.Repositories
 
         public IWalletRepository WalletRepository => _walletRepository;
 
-        public IWalletTypeRepository WalletTypeRepository => _walletTypeRepository;
+        public IAccountTypeRepository AccountTypeRepository => _walletTypeRepository;
 
         public IAccountSchemeRepository AccountSchemeRepository => _accountSchemeRepository;
 

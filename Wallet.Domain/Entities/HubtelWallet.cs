@@ -1,4 +1,4 @@
-﻿namespace Wallet.Domain.Entities.WalletEntities
+﻿namespace Wallet.Domain.Entities
 {
     public class HubtelWallet : BaseEntity
     {

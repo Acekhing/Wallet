@@ -25,7 +25,6 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            // hello world
         }
 
         public async Task<BaseReponse> Handle(CreateAccountShemeCommand request, CancellationToken cancellationToken)
@@ -47,7 +46,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
 
         private async Task<bool> IsWalletTypeExist(string walletTypeId)
         {
-            var result = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == walletTypeId);
+            var result = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == walletTypeId);
             return result.Count > 0;
         }
     }

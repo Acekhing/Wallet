@@ -86,7 +86,7 @@ namespace Wallet.Application.Commands.WalletCommands
 
         private async Task<bool> IsValidWalletType(string typeIs)
         {
-            var schemes = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == typeIs);
+            var schemes = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == typeIs);
 
             return schemes.Count > 0;
         }

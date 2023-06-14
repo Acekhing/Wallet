@@ -1,4 +1,4 @@
-﻿namespace Wallet.Application.DTOs.WalletModels
+﻿namespace Wallet.Application.DTOs.WalletDtos
 {
     public class GetWalletTypeDto
     {

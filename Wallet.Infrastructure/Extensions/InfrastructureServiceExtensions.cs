@@ -27,7 +27,7 @@ namespace Wallet.Infrastructure.Extensions
         {
             services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepositry<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IWalletTypeRepository, WalletTypeRepository>();
+            services.AddTransient<IAccountTypeRepository, AccountTypeRepository>();
             services.AddTransient<IWalletRepository, WalletRepository>();
             services.AddTransient<IAccountSchemeRepository, AccountSchemeRepository>();
 

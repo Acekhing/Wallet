@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Wallet.Application.Commands.AccountSchemeCommands;
 using Wallet.Application.Commands.WalletCommands;
-using Wallet.Application.Commands.WalletTypeCommands;
-using Wallet.Application.DTOs.WalletModels;
-using Wallet.Domain.Entities.WalletEntities;
+using Wallet.Application.DTOs;
+using Wallet.Application.DTOs.WalletDtos;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Application.Configs
 {
@@ -11,9 +11,9 @@ namespace Wallet.Application.Configs
     {
         public MappingProfile()
         {
-            CreateMap<WalletType, CreateWalletTypeCommand>().ReverseMap();
-            CreateMap<WalletType, UpdateWalletTypeCommand>().ReverseMap();
-            CreateMap<WalletType, GetWalletTypeDto>().ReverseMap();
+            CreateMap<AccountType, CreateAccountTypeDTO>().ReverseMap();
+            CreateMap<AccountType, UpdateAccountTypeDTO>().ReverseMap();
+            CreateMap<AccountType, GetAccountTypeDTO>().ReverseMap();
             CreateMap<HubtelWallet, CreateWalletCommand>().ReverseMap();
             CreateMap<HubtelWallet, UpdateWalletCommand>().ReverseMap();
             CreateMap<HubtelWallet, GetWalletDto>().ReverseMap();

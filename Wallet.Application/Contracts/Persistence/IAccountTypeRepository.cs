@@ -2,7 +2,7 @@
 
 namespace Wallet.Application.Contracts.Persistence
 {
-    public interface IAccountSchemeRepository: IBaseRepository<AccountScheme>
+    public interface IAccountTypeRepository: IBaseRepository<AccountType>
     {
     }
 }
