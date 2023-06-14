@@ -7,10 +7,10 @@ namespace Wallet.Application.Validators.AccountSchemeValidators
     {
         public UpdateCommandValidator()
         {
-            RuleFor(e => e.Id).NotEmpty().WithMessage("The Id property is required");
-            RuleFor(e => e.Name).NotEmpty().WithMessage("Please enter scheme name");
-            RuleFor(e => e.Name).MaximumLength(50).WithMessage("Scheme name can not be more than 50 characters");
-            RuleFor(e => e.WalletTypeId).NotEmpty().WithMessage("Please provide wallet type for this scheme");
+            RuleFor(e => e.DTO.Id).NotEmpty().WithMessage("Account scheme Id is required");
+            RuleFor(e => e.DTO.Name).NotEmpty().WithMessage("Account scheme name is required");
+            RuleFor(e => e.DTO.Name).MaximumLength(50).WithMessage("Scheme name can not be more than 50 characters");
+            RuleFor(e => e.DTO.AccountTypeId).NotEmpty().WithMessage("Account type id required");
         }
     }
 }
