@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wallet.Application.Contracts.Persistence;
-using Wallet.Domain.Entities.WalletEntities;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Infrastructure.Persistence.Repositories
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wallet.Domain.Entities.WalletEntities;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Application.Contracts.Persistence
 {

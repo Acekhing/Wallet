@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Wallet.Application.Contracts.Persistence;
 using Wallet.Application.Responses;
 using Wallet.Application.Utilities;
-using Wallet.Domain.Entities.WalletEntities;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Application.Queries.WalletQueries
 {

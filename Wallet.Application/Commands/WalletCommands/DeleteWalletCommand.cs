@@ -16,14 +16,10 @@ namespace Wallet.Application.Commands.WalletCommands
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteWalletCommandHandler(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        public DeleteWalletCommandHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
         public async Task<BaseReponse> Handle(DeleteWalletCommand request, CancellationToken cancellationToken)
         {
-            // Delegate task to the general create execution
             return await _unitOfWork.WalletRepository.HandleDeleteAsync(e => e.Id == request.Id);
         }
     }

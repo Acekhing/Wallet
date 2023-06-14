@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Wallet.API.Extensions;
 using Wallet.Application.Commands.WalletTypeCommands;
+using Wallet.Application.DTOs;
 using Wallet.Application.Queries.WalletTypeQueries;
 
 namespace Wallet.API.Controllers
@@ -24,21 +25,21 @@ namespace Wallet.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateWalletTypeCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateAccountTypeDTO dto)
         {
-            return await _mediator.SendCommand(this, command);
+            return await _mediator.SendCommand(this, new CreateAccountTypeCommand { DTO = dto });
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] UpdateWalletTypeCommand command)
+        public async Task<IActionResult> Update([FromBody] UpdateAccountTypeDTO dto)
         {
-            return await _mediator.SendCommand(this, command);
+            return await _mediator.SendCommand(this, new UpdateAccountTypeCommand { DTO = dto });
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] DeleteWalletTypeCommand command)
+        public async Task<IActionResult> Delete(string id)
         {
-            return await _mediator.SendCommand(this, command);
+            return await _mediator.SendCommand(this, new DeleteAccountTypeCommand { Id = id });
         }
     }
 }

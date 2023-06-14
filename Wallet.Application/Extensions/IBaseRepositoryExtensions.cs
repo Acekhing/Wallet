@@ -11,10 +11,10 @@ namespace Wallet.Application.Extensions
 {
     public static class IBaseRepositoryExtensions
     {
-        public static async Task<BaseReponse> HandleCreateAsync<TEntity, TPayload>(
+        public static async Task<BaseReponse> HandleCreateAsync<TEntity, DTO>(
             this IBaseRepository<TEntity> repository, 
             IMapper mapper, 
-            TPayload payload) where TEntity : class where TPayload : class
+            DTO payload) where TEntity : class where DTO : class
         {
             var response = new BaseReponse();
 
@@ -25,12 +25,12 @@ namespace Wallet.Application.Extensions
             return response.Success(message:"Record created successfully");
         }
 
-        public static async Task<BaseReponse> HandleUpdateAsync<TEntity, TPayload>(
+        public static async Task<BaseReponse> HandleUpdateAsync<TEntity, DTO>(
             this IBaseRepository<TEntity> repository, 
             IMapper mapper, 
-            TPayload payload,
+            DTO payload,
             Expression<Func<TEntity,bool>> predicate
-            ) where TEntity : class where TPayload : class
+            ) where TEntity : class where DTO : class
         {
             var response = new BaseReponse();
 

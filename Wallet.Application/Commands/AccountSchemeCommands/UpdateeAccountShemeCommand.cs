@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
+using Wallet.Application.DTOs;
 using Wallet.Application.Extensions;
 using Wallet.Application.Responses;
 
@@ -12,17 +12,14 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
 {
     public class UpdateeAccountShemeCommand : IRequest<BaseReponse>
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public DateTime EditedAt { get; set; }
-        public string WalletTypeId { get; set; }
+        public UpdateAccountSchemeDTO DTO { get; set; }
     }
 
     public class UpdateeAccountShemeCommandHandler : IRequestHandler<UpdateeAccountShemeCommand, BaseReponse>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private const string DuplicateMsg = "Account scheme type name exists for another record";
+        private const string SchemeExist = "Account scheme type name exists for another record";
 
         public UpdateeAccountShemeCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -34,15 +31,32 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             var response = new BaseReponse();
 
+            if (await IsWalletTypeExist(request.DTO.AccountTypeId) == false)
+            {
+                return response.Failed("Update", "Account type does not exist or has been deleted");
+            }
+
+            if (await IsSchemeExist(request.DTO.Name, request.DTO.Id))
+            {
+                return response.Failed("Creation", SchemeExist);
+            }
+
+            return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request.DTO, e => e.Id == request.DTO.Id);
+        }
+
+        private async Task<bool> IsWalletTypeExist(string walletTypeId)
+        {
+            var result = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == walletTypeId && e.Active == true);
+            return result.Count > 0;
+        }
+
+        private async Task<bool> IsSchemeExist(string schemename, string requestId)
+        {
             var scheme = (await _unitOfWork.AccountSchemeRepository
-                        .GetAllAsync(e => e.Name == request.Name.ToLower().Trim()))
+                        .GetAllAsync(e => e.Name.ToLower() == schemename.ToLower().Trim()))
                         .FirstOrDefault();
 
-            if (scheme != null && scheme.Id != request.Id)
-                return response.Failed("Update", DuplicateMsg);
-
-            // Delegate task to the general update execution
-            return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request, e => e.Id == request.Id);
+            return scheme != null && scheme.Id != requestId;
         }
     }
 

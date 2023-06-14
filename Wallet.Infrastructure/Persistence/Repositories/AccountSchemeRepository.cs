@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using Wallet.Application.Contracts.Persistence;
-using Wallet.Domain.Entities.WalletEntities;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Infrastructure.Persistence.Repositories
 {

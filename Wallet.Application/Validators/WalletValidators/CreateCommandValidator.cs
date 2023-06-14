@@ -7,12 +7,12 @@ namespace Wallet.Application.Validators.WalletValidators
     {
         public CreateCommandValidator()
         {
-            RuleFor(c => c.Name).NotEmpty().WithMessage("The name property is required");
-            RuleFor(c => c.UserId).NotEmpty().WithMessage("The user id property is required");
-            RuleFor(c => c.WalletTypeId).NotEmpty().WithMessage("The wallet type id is required");
-            RuleFor(c => c.AccountSchemeId).NotEmpty().WithMessage("The account schema is required");
-            RuleFor(c => c.AccountNumber).NotEmpty().WithMessage("The account number is required");
-            RuleFor(c => c.AccountNumber).MinimumLength(10).WithMessage("Account number cannot be less than 10");
+            RuleFor(c => c.DTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(c => c.DTO.UserId).NotEmpty().WithMessage("User id is required");
+            RuleFor(c => c.DTO.AccountTypeId).NotEmpty().WithMessage("Account type id is required");
+            RuleFor(c => c.DTO.AccountSchemeId).NotEmpty().WithMessage("Account schema is required");
+            RuleFor(c => c.DTO.AccountNumber).NotEmpty().WithMessage("Account number is required");
+            RuleFor(c => c.DTO.AccountNumber).MinimumLength(10).WithMessage("Account number cannot be less than 10");
         }
     }
 }
