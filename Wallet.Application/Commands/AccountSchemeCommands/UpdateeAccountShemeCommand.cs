@@ -34,7 +34,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
             var response = new BaseReponse();
 
             if (await IsWalletTypeExist(request.DTO.AccountTypeId) == false)
-                return response.Failed("Update", "Account type does not exist");
+                return response.Failed("Update", "Account type does not exist or has been deleted");
 
             if (await IsSchemeExist(request.DTO.Name, request.DTO.Id) == true)
                 return response.Failed("Creation", DuplicateMsg);
@@ -45,7 +45,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
 
         private async Task<bool> IsWalletTypeExist(string walletTypeId)
         {
-            var result = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == walletTypeId);
+            var result = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == walletTypeId && e.Active == true);
             return result.Count > 0;
         }
 
