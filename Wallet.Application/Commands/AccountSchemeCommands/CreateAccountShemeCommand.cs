@@ -25,6 +25,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            // hello world
         }
 
         public async Task<BaseReponse> Handle(CreateAccountShemeCommand request, CancellationToken cancellationToken)
