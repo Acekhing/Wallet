@@ -47,7 +47,6 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
         private async Task<bool> IsWalletTypeExist(string walletTypeId)
         {
             var result = await _unitOfWork.WalletTypeRepository.GetAllAsync(e => e.Id == walletTypeId);
-
             return result.Count > 0;
         }
     }
