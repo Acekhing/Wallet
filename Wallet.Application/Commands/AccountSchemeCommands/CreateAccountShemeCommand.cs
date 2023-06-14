@@ -34,12 +34,15 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
             var response = new BaseReponse();
 
             if (await IsWalletTypeExist(request.DTO.AccountTypeId) == false)
+            {
                 return response.Failed("Creation", "Account type does not exist or has been deleted");
+            }
 
-            if (await IsSchemeExist(request.DTO.Name) == true)
+            if (await IsSchemeExist(request.DTO.Name))
+            {
                 return response.Failed("Creation", SchemeExist);
+            }
 
-            // Delegate task to the general create function handler
             return await _unitOfWork.AccountSchemeRepository.HandleCreateAsync(_mapper, request.DTO);
         }
 

@@ -8,6 +8,7 @@ namespace Wallet.Application.Validators.AuthValidators
         public LoginCommandValidator()
         {
             RuleFor(e => e.LoginDto.Email).NotEmpty().WithMessage("Email is required");
+            RuleFor(e => e.LoginDto.Email).Matches("").WithMessage("Email is required");
             RuleFor(e => e.LoginDto.Password).NotEmpty().WithMessage("Password is required");
         }
     }

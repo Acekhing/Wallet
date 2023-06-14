@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal;
 using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
@@ -32,15 +32,21 @@ namespace Wallet.Application.Commands.WalletTypeCommands
         {
             var response = new BaseReponse();
 
+            if (await IsTypeExist(request.DTO.Name, request.DTO.Id))
+            {
+                return response.Failed("Update", TypeExist);
+            }
+            
+            return await _unitOfWork.AccountTypeRepository.HandleUpdateAsync(_mapper, request.DTO, e => e.Id == request.DTO.Id);
+        }
+
+        private async Task<bool> IsTypeExist(string typename, string requestId)
+        {
             var result = (await _unitOfWork.AccountTypeRepository
-                        .GetAllAsync(e => e.Name.ToLower() == request.DTO.Name.ToLower().Trim()))
+                        .GetAllAsync(e => e.Name.ToLower() == typename.ToLower().Trim()))
                         .FirstOrDefault();
 
-            if (result != null && result.Id != request.DTO.Id)
-                return response.Failed("Update", TypeExist);
-
-            // Delegate task to the general update execution
-            return await _unitOfWork.AccountTypeRepository.HandleUpdateAsync(_mapper, request.DTO, e => e.Id == request.DTO.Id);
+            return result != null && result.Id != requestId;
         }
     }
 }

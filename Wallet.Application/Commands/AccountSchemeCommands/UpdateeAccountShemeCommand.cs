@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Runtime.Internal;
 using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
@@ -21,7 +19,7 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private const string DuplicateMsg = "Account scheme type name exists for another record";
+        private const string SchemeExist = "Account scheme type name exists for another record";
 
         public UpdateeAccountShemeCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -34,12 +32,15 @@ namespace Wallet.Application.Commands.AccountSchemeCommands
             var response = new BaseReponse();
 
             if (await IsWalletTypeExist(request.DTO.AccountTypeId) == false)
+            {
                 return response.Failed("Update", "Account type does not exist or has been deleted");
+            }
 
-            if (await IsSchemeExist(request.DTO.Name, request.DTO.Id) == true)
-                return response.Failed("Creation", DuplicateMsg);
+            if (await IsSchemeExist(request.DTO.Name, request.DTO.Id))
+            {
+                return response.Failed("Creation", SchemeExist);
+            }
 
-            // Delegate task to the general update functional handler
             return await _unitOfWork.AccountSchemeRepository.HandleUpdateAsync(_mapper, request.DTO, e => e.Id == request.DTO.Id);
         }
 

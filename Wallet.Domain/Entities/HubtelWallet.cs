@@ -2,11 +2,11 @@
 {
     public class HubtelWallet : BaseEntity
     {
-        public string UserId { get; set; }
-        public string WalletTypeId { get; set; }
-        public string AccountSchemeId { get; set; }
-        public string AccountNumber { get; set; }
-        public string Owner { get; set; }
-        public string EncryptedAccountNumber { private get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string AccountScheme { get; set; } = string.Empty;
+        public string AccountNumber { get; set; } = string.Empty;
+        public string EncryptedAccountNumber { get; set; } = string.Empty;
+        public string Owner { get; set; } = string.Empty;
     }
 }

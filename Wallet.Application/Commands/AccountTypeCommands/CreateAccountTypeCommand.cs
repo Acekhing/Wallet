@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal;
 using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
@@ -30,14 +31,20 @@ namespace Wallet.Application.Commands.WalletTypeCommands
         {
             var response = new BaseReponse();
 
-            var results = await _unitOfWork.AccountTypeRepository
-                                .GetAllAsync(e => e.Name.ToLower().Trim() == request.DTO.Name.ToLower().Trim());
-
-            if (results.Count > 0)
+            if (await IsTypeExist(request.DTO.Name))
+            {
                 return response.Failed("Creation", TypeExist);
-
-            // Delegate task to the general create function handler
+            }
+                
             return await _unitOfWork.AccountTypeRepository.HandleCreateAsync(_mapper, request.DTO);
+        }
+
+        private async Task<bool> IsTypeExist(string typename)
+        {
+            var results = await _unitOfWork.AccountTypeRepository
+                                .GetAllAsync(e => e.Name.ToLower() == typename.ToLower().Trim());
+
+            return results.Count > 0;
         }
     }
 }

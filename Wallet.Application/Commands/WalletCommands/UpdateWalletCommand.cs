@@ -1,33 +1,27 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Wallet.Application.Contracts.Persistence;
+using Wallet.Application.DTOs;
 using Wallet.Application.Extensions;
 using Wallet.Application.Responses;
 using Wallet.Application.Utilities;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Application.Commands.WalletCommands
 {
     public class UpdateWalletCommand : IRequest<BaseReponse>
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string UserId { get; set; }
-        public string WalletTypeId { get; set; }
-        public string AccountSchemeId { get; set; }
-        public string AccountNumber { get; set; }
-        public string EncryptedAccountNumber { get; set; }
-        public string Owner { get; set; }
-        public DateTime EditedAt { get; set; }
+        public UpdateWalletDTO DTO { get; set; }
     }
 
     public class UpdateWalletCommandHandler : IRequestHandler<UpdateWalletCommand, BaseReponse>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private const string MaxWalletMsg = "You have exceeded your maximum wallet accounts";
 
         public UpdateWalletCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
@@ -39,64 +33,89 @@ namespace Wallet.Application.Commands.WalletCommands
         {
             var response = new BaseReponse();
 
-            if (await IsValidAccountScheme(request.AccountSchemeId) == false)
+            var existingWallet = await IsWalletExist(request.DTO.Id);
+            if (existingWallet == null)
+            {
+                return response.Failed("Update", "The wallet you are trying to update does not exist");
+            }
+
+            var type = await GetAccountType(request.DTO.AccountTypeId);
+            if (type == null)
+            {
+                return response.Failed("Update", "Account type does not exist");
+            }
+
+            var scheme = await GetAccountScheme(request.DTO.AccountTypeId, request.DTO.AccountSchemeId);
+            if (scheme == null)
             {
                 return response.Failed("Update", "Account scheme does not exist");
             }
 
-            if (await IsValidWalletType(request.WalletTypeId) == false)
+            var encryptedAccountNumber = CryptographyUtils.Encrypt(request.DTO.AccountNumber);
+            if (await IsAccountNumberExist(encryptedAccountNumber, request.DTO.Id))
             {
-                return response.Failed("Update", "Wallet type does not exist");
+                return response.Failed("Update", "Wallet exist with the same account number");
             }
 
-            if (await IsWalletExist(request.Name, request.Id) == true)
+            if (await HasExceededMaxAccount(request.DTO.UserId))
             {
-                return response.Failed("Creation", "Wallet exist with the same name");
+                return response.Failed("Update", MaxWalletMsg);
             }
 
-            SecureAccountnumber(request, out UpdateWalletCommand secureAccount);
+            SecureAccount(request.DTO, type.Name, scheme.Name, encryptedAccountNumber, out HubtelWallet wallet);
 
-            // Delegate task to the general update execution
-            return await _unitOfWork.WalletRepository.HandleUpdateAsync(_mapper, request, e => e.Id == request.Id);
+            wallet = _mapper.Map(wallet, existingWallet);
+
+            await _unitOfWork.WalletRepository.UpdateAsync(wallet, e => e.Id == wallet.Id);
+
+            return response.Success(message: "Wallet updated successfully");
         }
 
-        private void SecureAccountnumber(UpdateWalletCommand request, out UpdateWalletCommand securedAcnt)
+        private void SecureAccount(UpdateWalletDTO dto, string type, string scheme, string encryptedNumber, out HubtelWallet wallet)
         {
-            securedAcnt = new UpdateWalletCommand
+            wallet = new HubtelWallet
             {
-                Id = request.Id,
-                UserId = request.UserId,
-                AccountSchemeId = request.AccountSchemeId,
-                Name = request.Name,
-                WalletTypeId = request.WalletTypeId,
-                AccountNumber = request.AccountNumber.Substring(0, 6),
-                EncryptedAccountNumber = CryptographyUtils.Encrypt(request.AccountNumber),
-                EditedAt = request.EditedAt,
-                Owner = request.Owner,
+                Id = dto.Id,
+                Name = dto.Name,
+                AccountScheme = scheme,
+                Type = type,
+                AccountNumber = dto.AccountNumber.Substring(0, 6),
+                EncryptedAccountNumber = encryptedNumber,
+                Owner = dto.Owner,
+                UserId = dto.UserId,
+                EditedAt = dto.EditedAt
             };
         }
 
-        private async Task<bool> IsValidAccountScheme(string schemeId)
+        private async Task<AccountType?> GetAccountType(string typeId)
         {
-            var schemes = await _unitOfWork.AccountSchemeRepository.GetAllAsync(e => e.Id == schemeId);
-
-            return schemes.Count > 0;
-
+            return (await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == typeId)).FirstOrDefault();
         }
 
-        private async Task<bool> IsValidWalletType(string typeIs)
+        private async Task<AccountScheme?> GetAccountScheme(string typeId, string schemeId)
         {
-            var schemes = await _unitOfWork.AccountTypeRepository.GetAllAsync(e => e.Id == typeIs);
-
-            return schemes.Count > 0;
+            var results = await _unitOfWork.AccountSchemeRepository.GetAllAsync(e => e.AccountTypeId == typeId && e.Id == schemeId);
+            return results.FirstOrDefault();
         }
 
-        private async Task<bool> IsWalletExist(string name, string walletId)
+        private async Task<bool> IsAccountNumberExist(string accountNumber, string walletId)
         {
-            var matchingWallets = await _unitOfWork.WalletRepository
-                    .GetAllAsync(e => e.Name.ToLower().Trim() == name.ToLower().Trim());
+            var accounts = await _unitOfWork.WalletRepository
+                    .GetAllAsync(e => e.EncryptedAccountNumber == accountNumber.Trim());
 
-            return matchingWallets.Count > 0 && matchingWallets.Any(e => e.Id != walletId);
+            return accounts.Count > 0 && accounts.Any(e => e.Id != walletId);
+        }
+
+        private async Task<HubtelWallet?> IsWalletExist(string walletId)
+        {
+            var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.Id == walletId);
+            return results.FirstOrDefault();
+        }
+
+        private async Task<bool> HasExceededMaxAccount(string userId)
+        {
+            var results = await _unitOfWork.WalletRepository.GetAllAsync(e => e.UserId == userId);
+            return results != null && results.Count == 5;
         }
     }
 }
